@@ -1,25 +1,26 @@
-# Name:Roshan Yadav
-# Roll no:2311144
+# Name: Roshan Yadav
+# Roll no: 2311144
 # Assignment: Simpson and Monte Carlo Integration
 
 from Func_lib_for_assgn_11 import *
 
 #For Question_1:
-print("Doing Question no 1")
+print("Doing Question no 1\n")
 # For accuracy upto 6 decimal places by Midpoint point method N=
 
 #For f(x)=1/x
 Q_1M_1=midpoint_int(t=1,a=1,b=2,N=1582)
 print(f"Integartion result of f(x)=1/x by mid point method accurate upto six decimal places = {Q_1M_1}\n")
+
 # For f(x)=xcos(x)
 Q_1M_2=midpoint_int(t=2,a=0,b=(math.pi)/2,N=680)
-print(f"Integartion result of f(x)=xcos(x) by Simpson method accurate upto six decimal places = {Q_1M_2}\n")
+print(f"Integartion result of f(x)=xcos(x) by mid point method accurate upto six decimal places = {Q_1M_2}\n")
 
 # For accuracy upto 6 decimal places by Simpson method
 
 #For f(x)=1/x
 Q_1S_1=simpson_int(t=1,a=1,b=2,N=33)
-print(f"Integartion result of f(x)=1/x by mid point method accurate upto six decimal places = {Q_1S_1}\n")
+print(f"Integartion result of f(x)=1/x by Simpson method accurate upto six decimal places = {Q_1S_1}\n")
 
 # For f(x)=xcos(x)
 Q_1S_2=simpson_int(t=2,a=0,b=(math.pi)/2,N=16)
@@ -28,6 +29,25 @@ print(f"Integartion result of f(x)=xcos(x) by Simpson method accurate upto six d
 
 # For Question 2:
 print("Doing question no 2")
-Q_2Mon_3=monte_carlo_int(t=3,a=-1,b=1,k=0.9651217631279374)
+Q_2Mon_3=monte_carlo_int(t=3,a=-1,b=1,v=0.5453512866)
 
-print(f"Integartion result of f(x)=(sin(x))^2 by Monte carlo method accurrate upto 3 decimal places = {Q_2Mon_3}")
+print(f"Integartion result of f(x)=(sin(x))^2 by Monte carlo method accurrate upto 3 decimal places = {Q_2Mon_3}\n")
+
+
+
+#Results
+"""
+Doing Question no 1
+
+Integartion result of f(x)=1/x by mid point method accurate upto six decimal places = 0.6931471680735507
+
+Integartion result of f(x)=xcos(x) by mid point method accurate upto six decimal places = 0.5707968983768091
+
+Integartion result of f(x)=1/x by Simpson method accurate upto six decimal places = 0.6880584447879137
+
+Integartion result of f(x)=xcos(x) by Simpson method accurate upto six decimal places = 0.570798689642199
+
+Doing question no 2
+Integartion result of f(x)=(sin(x))^2 by Monte carlo method accurrate upto 3 decimal places = 0.5453098827738323
+
+"""
