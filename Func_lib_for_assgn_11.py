@@ -19,7 +19,7 @@ def midpoint_int(t,a,b,N):
 
     Formula used: 
     M_n= summation w(x_n)*f(x_n) from n=1 to n=N
-    where w(x_n)=h for all n given h=(b-a)/2.'''
+    where w(x_n)=h for all n given h=(b-a)/N.'''
     
     # Finding h
     h=(b-a)/N
@@ -27,9 +27,9 @@ def midpoint_int(t,a,b,N):
     # Intialising the result
     r=0
 
-    for i in range(1,N):
+    for i in range(1,N+1):
         # Finding x_n
-        x=(2*a+i*h)/2
+        x=a+(i-0.5)*h
 
         # Summation step
         r=r+h*(f(t,x))
@@ -37,11 +37,12 @@ def midpoint_int(t,a,b,N):
     return r
 
 def simpson_int(t,a,b,N):
+    
     '''This does Numerical intergartion of f(x) from a to b
-    using Midpoint method. 
+    using Simpson method. 
 
     Formula used: 
-    S_n= summation w(x_n)*f(x_n) from n=1 to n=N
+    S_n= summation w(x_n)*f(x_n) from n=0 to n=N
     where w(x_0)=w(x_N)=h/3, w(x_i)=2h/3 for all even i and w(x_j)=4h/3 for odd j given h=(b-a)/N.'''
 
     #Find h
@@ -50,7 +51,7 @@ def simpson_int(t,a,b,N):
     #Intialising the result
     r=0
 
-    # Summation loop for summation of w(x_n)*f(x_n) from n=1 to N
+    # Summation loop for summation of w(x_n)*f(x_n) from n=0 to N
     for i in range(0,N+1):
 
         # Finding x_i
@@ -59,9 +60,9 @@ def simpson_int(t,a,b,N):
         # Finding weight
         if i==0 or i==N:
             w=h/3
-        if i%2==0:
+        elif i%2==0:
             w=2*h/3
-        if i%2!=2:
+        else:
             w=4*h/3
         
         # Summation step
@@ -69,59 +70,77 @@ def simpson_int(t,a,b,N):
 
     return r
 
-def pRNG(s=0.1, c=3.95, n=100):
-    '''This function is a Pseudo random number generator 
-    which uses equation x(i+1) = c*x(i)*(1-x(i)), 
-    where x(0)=s and c are given as input.
-    Returns a list of n random numbers'''
+def pRNG(s=12345, n=100):
+
+    '''Linear Congruential Generator - better random numbers for Monte Carlo
+    Uses equation x(i+1) = (a*x(i) + c) mod m
+    Returns a list of n random numbers in [0,1]'''
 
     L = []
-    L.append(s)  # x(0) = s
+    x = s
+    a = 1664525
+    c = 1013904223
+    m = 2**32
     
-    for i in range(n-1):
-        t = c * L[i] * (1 - L[i])  # x(i+1) = c*x(i)*(1-x(i))
-        L.append(t)
+    for i in range(n):
+        x = (a * x + c) % m
+        L.append(x / m)
     
     return L
 
-def monte_carlo_int(t,a,b,k):
-    """This Function does Monte Carlo integartion."""
-    r=0
-    t=0
-    o=0
-    R=[]
-    O=[]
-    N=1
-    M=[]
+def monte_carlo_int(t, a, b, v, max_iter=30):
 
-    while (abs(k-r)) > 0.00001:
-        N=N*10
-        L=pRNG(n=N)
-        for i in range(1,N+1):
-            x=a+(b-a)*float(L[i])
-            print(x)
-            print(f(t,x))
+    """This Function does Monte Carlo integartion. 
+    It gives the answer accurate upto 3 decimal places 
+    as discussed in the class."""
 
-            r = r + ((b-a)/N)*(f(t,x))
-            t = t + ((1/N)*(f(t,x))**2)
+    R = []
+    M = []
+    N = 100
+    iter = 0
+    seed = 12345
+    
+    sum_f = 0
+    sum_f2 = 0
+    total_samples = 0
 
-        o=t-((1/(b-a))*r)**2
+    while iter < max_iter:
+        iter = iter + 1
+        
+        seed = (seed * 1103515245 + 12345) % (2**31)
+        
+        L = pRNG(s=seed, n=N)
+        
+        for i in range(N):
+            x = a + (b-a) * L[i]
+            fx = f(t, x)
+            
+            sum_f = sum_f + fx
+            sum_f2 = sum_f2 + fx**2
+        
+        total_samples = total_samples + N
+        
+        r = (b-a) * sum_f / total_samples
+        k = sum_f2 / total_samples
+        o = k - (sum_f / total_samples)**2
+        
         R.append(r)
-        O.append(o)
-        M.append(N)
+        M.append(total_samples)
+        
+        if len(R) >= 3 and abs(r - v) < 0.0001:
+                break
+        
+        N = N + 500
 
-    # Create Plot of F_n vs N for Monte Carlo Integration
     plt.figure(figsize=(8,6))
-    plt.scatter(R,M,alpha=0.5,s=0.5,color='blue')
+    plt.plot(M, R, marker='o', markersize=8, color='blue', label='F_N')
+    plt.axhline(y=v, color='r', linestyle='--', linewidth=2, label=f'Target={v:.4f}')
     plt.xlabel("N")
     plt.ylabel("F_N")
     plt.title("Plot of F_n vs N for Monte Carlo Integration")
-
-    # Save the plot
+    plt.legend()
+    plt.grid(True, alpha=0.3)
     plt.savefig(f"Assgn_11_Monte_Carlo.png", dpi=300, bbox_inches='tight')
+    plt.close()
 
-    return R[len(R)-1]
-
-
-    
-
+    return R[-1]
