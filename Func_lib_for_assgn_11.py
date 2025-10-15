@@ -70,18 +70,17 @@ def simpson_int(t,a,b,N):
 
     return r
 
-def pRNG(s=0.123456789, c=3.9, n=10000):
-    '''This function is a Pseudo random number generator 
-    which uses equation x(i+1) = c*x(i)*(1-x(i)), 
-    where x(0)=s and c are given as input.
-    Returns a list of n random numbers'''
+def pRNG(s=12345, n=100):
 
     L = []
-    L.append(s)  # x(0) = s
+    x = s
+    a = 1664525
+    c = 1013904223
+    m = 2**32
     
-    for i in range(n-1):
-        t = c * L[i] * (1 - L[i])  # x(i+1) = c*x(i)*(1-x(i))
-        L.append(t)
+    for i in range(n):
+        x = (a * x + c) % m
+        L.append(x / m)
     
     return L
 
@@ -141,4 +140,5 @@ def monte_carlo_int(t, a, b, v, max_iter=30):
     plt.close()
 
     return R[-1]
+
 
